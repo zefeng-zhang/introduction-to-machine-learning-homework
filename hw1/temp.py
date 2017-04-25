@@ -9,28 +9,22 @@ import re
 
 # Given raw data, estimate features
 def get_features(df, mean_temp_dic):
-    print "melt"
     df = pd.melt(df, id_vars=['station', 'month', 'day'], 
                         var_name='hour', value_name='temp')
-    print "sort values"
     df = df.sort_values(by = ['station', 'month', 'day', 'hour'], \
                         ascending = [True, True, True, True])
-    print "prev_temp"
     df['prev_temp'] = df.groupby(by = ['station'])['temp'].shift(1)
-    print "prev_day_temp"
     df['prev_day_temp'] = df.groupby(by = ['station'])['temp'].shift(24)
-    print "run_mean_temp"
     df['run_mean_temp'] = df.groupby(by = ['station', 'month', 'day'])['temp'].\
                             transform(lambda x: x.rolling(window=24, min_periods=1).mean().shift(1))
     df['datetime'] = df['month'] + df['day'] + df['hour']
-    print "mean_temp"
-    datetime = df['datetime'].tolist()
-    df['mean_temp'] = [mean_temp_dic[val] for val in datetime]
+    df['mean_temp'] = [mean_temp_dic[val] for val in df['datetime'].tolist()]
     df = df.dropna()
-    print df.head()
     return df[['prev_temp', 'prev_day_temp', 'run_mean_temp', 'mean_temp']], df['temp']
 
-# Get testing stations
+"""
+Main Program
+"""
 # test_stations = ["USW00023234", "USW00014918", "USW00012919", "USW00013743", "USW00025309"]
 # command: python HW1_task2_KNN.py USW00023234 USW00014918 USW00012919 USW00013743 USW00025309
 
