@@ -61,7 +61,7 @@ df = pd.DataFrame(data = lines,
 for i in range(3, len(df.columns)):
     df.iloc[:, i] = df.iloc[:, i].astype(int)
 # Imputation with col mean values
-df = df.sort_values(by = ['station', 'month', 'day',])
+df = df.sort_values(by = ['station', 'month', 'day'])
 df = df.replace(-9999, np.nan)
 df = df.fillna(df.mean())
 
