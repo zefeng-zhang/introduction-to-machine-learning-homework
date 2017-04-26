@@ -26,7 +26,7 @@ def get_features(df, mean_temp_dic):
 Main Program
 """
 # test_stations = ["USW00023234", "USW00014918", "USW00012919", "USW00013743", "USW00025309"]
-# command: python HW1_task2_KNN.py USW00023234 USW00014918 USW00012919 USW00013743 USW00025309
+# command: python temp.py USW00023234 USW00014918 USW00012919 USW00013743 USW00025309
 
 """
 Read test stations
@@ -88,8 +88,8 @@ train_temp_dic = dict(zip(train_mean_temp['date'], train_mean_temp['temp']))
 Other features
 """
 
-(train_x, train_y) = get_features(df_train, train_temp_dic)
-(test_x, test_y) = get_features(df_test, train_temp_dic)
+(x_train, y_train) = get_features(df_train, train_temp_dic)
+(x_test, y_test) = get_features(df_test, train_temp_dic)
 
 """
 Estiamte MSE using two approaches: SLR and KNN
@@ -97,17 +97,17 @@ Estiamte MSE using two approaches: SLR and KNN
 
 # SLR
 algo = linear_model.LinearRegression()
-algo.fit(train_x, train_y)
-y_pred = algo.predict(test_x)
-MSE_LR = np.mean((test_y - y_pred)**2.0)
+algo.fit(x_train, y_train)
+y_pred = algo.predict(x_test)
+MSE_LR = np.mean((y_test - y_pred)**2.0)
 print "The MSE of LR = {}".format(MSE_LR)
 
 # KNN
 n_neighbors = range(1, 52, 5)
 param_grid = {"n_neighbors" : n_neighbors}
 grid_search = GridSearchCV(KNeighborsRegressor(), param_grid, cv = 3)
-grid_search.fit(train_x, train_y)
+grid_search.fit(x_train, y_train)
 print grid_search.best_params_['n_neighbors']
-y_pred = grid_search.predict(test_x)
-MSE_KK = np.mean((test_y - y_pred) ** 2.0)
+y_pred = grid_search.predict(x_test)
+MSE_KK = np.mean((y_test - y_pred) ** 2.0)
 print "The MSE of KNN = {}".format(MSE_KK)
